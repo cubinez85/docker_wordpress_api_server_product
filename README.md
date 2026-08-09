@@ -1,5 +1,5 @@
 #Команды для пуша
-# Перетегируем ваши образы
+# Перетегируем образы
 docker tag wordpress_api_server-api:latest cubinez85/wordpress-api:api-latest
 docker tag wordpress_api_server-worker:latest cubinez85/wordpress-api:worker-latest
 
