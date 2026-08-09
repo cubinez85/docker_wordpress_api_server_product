@@ -1,0 +1,91 @@
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: wordpress-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER}      # Исправлено: POSTGRES_USER вместо POSTGRESQL_USER
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}  # Исправлено: POSTGRES_PASSWORD вместо POSTGRESQL_PASSWORD
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./app/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - leads-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask API (Gunicorn)
+  api:
+    image: cubinez85/wordpress-api:api-latest
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: leads-wordpress-api
+    restart: always
+    user: "1000:1000"  # Добавьте эту строку
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/var/log/wordpress
+      - ./.env:/app/.env:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - leads-network
+    ports:
+      - "127.0.0.1:8081:8081"
+    command: >
+      gunicorn
+        --workers 3
+        --bind 0.0.0.0:8081
+        --timeout 120
+        --access-logfile /var/log/wordpress/gunicorn-access.log
+        --error-logfile /var/log/wordpress/gunicorn-error.log
+        wsgi:app
+
+  # Background Worker
+  worker:
+    image: cubinez85/wordpress-api:worker-latest
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: leads-wordpress-worker
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+      - FRONTEND_URL=${FRONTEND_URL:-https://wordpress-cloud.cubinez.ru}
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/var/log/wordpress
+      - ./.env:/app/.env:ro
+      - ./sa-key.json:/app/sa-key.json:ro
+      - worker_state:/app/state
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - leads-network
+    command: python main.py
+
+networks:
+  leads-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  worker_state:
+    driver: local

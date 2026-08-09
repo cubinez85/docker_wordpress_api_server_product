@@ -1,0 +1,113 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# README и документация
+README.md
+*.md
+docs/
+
+# Docker и сборка
+Dockerfile
+.dockerignore
+docker-compose*.yml
+docker-compose*.yaml
+*.dockerfile
+
+# CI/CD
+.github/
+.gitlab/
+.gitlab-ci.yml
+.travis.yml
+circle.yml
+.git/**
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+.cache/
+tmp/
+temp/
+logs/
+
+# Редакторы и IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-*
+.editorconfig
+
+# Бекапы (ваша папка с бекапами находится выше, но на всякий случай)
+**/backups/
+**/wordpress-backups/
+*.sql
+*.sql.gz
+*.tar.gz
+
+# WordPress специфичные
+wp-config-local.php
+wp-config-dev.php
+wp-config-production.php
+*.sqlite
+*.sqlite3
+wp-content/uploads/**/*.zip
+wp-content/upgrade/
+wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+wp-content/themes/twenty*/
+wp-content/languages/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/backups/
+
+# Node.js (если есть)
+node_modules/
+package-lock.json
+yarn.lock
+.npmrc
+pnpm-lock.yaml
+
+# Python (если есть)
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+env/
+.venv/
+.python-version
+
+# Файлы окружения
+.env
+.env.*
+!.env.example
+
+# Архивы и сжатые файлы
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.bz2
+
+# Тесты
+tests/
+test/
+coverage/
+.nyc_output/
+
+# Другое
+.docker/
+.cache/
+.vagrant/
+build/
+dist/
+bin/
+obj/
+out/

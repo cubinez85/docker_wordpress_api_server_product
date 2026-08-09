@@ -1,0 +1,38 @@
+FROM python:3.10-slim
+
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создание рабочей директории
+WORKDIR /app
+
+# Копирование requirements
+COPY requirements.txt .
+
+# Установка Python зависимостей
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Копирование кода приложения
+COPY . .
+
+# Создание директории для логов
+RUN mkdir -p /var/log/wordpress
+
+# Создание непривилегированного пользователя
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /app /var/log/wordpress
+USER appuser
+
+# Expose порт
+EXPOSE 8081
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8081/api/health')" || exit 1
+
+# Команда запуска (переопределяется в docker-compose.yml)
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8081", "wsgi:app"]
