@@ -29,6 +29,17 @@ services:
   postgres:
     image: postgres:15-alpine  # ← официальный, скачается сам
     # ... остальные настройки
+    
+#!!! обязательно!!!
+mkdir -p logs
+sudo chown -R 1000:1000 logs
+sudo chmod -R 755 logs
+
+sudo chown 1000:1000 sa-key.json
+sudo chmod 644 sa-key.json
+
+#и не забыть загрузить .env files!!!
+
 
 # Полезные команды для управления
 docker compose up -d #без --build
