@@ -11,14 +11,19 @@ docker push cubinez85/wordpress-api:worker-latest
 docker pull cubinez85/wordpress-api:api-latest
 docker pull cubinez85/wordpress-api:worker-latest
 
-#в docker-compose.yml убираем build:
+#в docker-compose.yml убираем build, context и dockerfile:
 services:
   api:
     image: cubinez85/wordpress-api:api-latest  # ← ваш образ
+    container_name: leads-wordpress-api
+    restart: always
+    user: "1000:1000"
     # ... остальные настройки
   
   worker:
     image: cubinez85/wordpress-api:worker-latest  # ← ваш образ
+    container_name: leads-wordpress-worker
+    restart: always
     # ... остальные настройки
   
   postgres:
