@@ -24,8 +24,6 @@ services:
   # Flask API (Gunicorn)
   api:
     image: cubinez85/wordpress-api:api-latest
-      context: .
-      dockerfile: Dockerfile.api
     container_name: leads-wordpress-api
     restart: always
     user: "1000:1000"  # Добавьте эту строку
@@ -57,8 +55,6 @@ services:
   # Background Worker
   worker:
     image: cubinez85/wordpress-api:worker-latest
-      context: .
-      dockerfile: Dockerfile.worker
     container_name: leads-wordpress-worker
     restart: always
     environment:
