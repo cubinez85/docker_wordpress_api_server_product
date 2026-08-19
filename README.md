@@ -209,6 +209,12 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -config /etc/nginx/ssl/openssl.cnf \
   -extensions v3_req
 
+# сертификаты без extensions
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+     -keyout /etc/nginx/ssl/k8s-converted-files.key \
+     -out /etc/nginx/ssl/k8s-converted-files.crt \
+     -subj "/CN=k8s-converted-files.cubinez.ru"
+
 # Установите права
 sudo chmod 644 /etc/nginx/ssl/wordpress.crt
 sudo chmod 600 /etc/nginx/ssl/wordpress.key
